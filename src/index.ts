@@ -16,7 +16,7 @@ app.use("/app", express.static("./src/app"));
 
 app.get("/api/healthz", handlerReadiness);
 
-app.get("/admin/reset", handlerReset);
+app.post("/admin/reset", handlerReset);
 app.get("/admin/metrics", handlerMetrics);
 
 app.listen(PORT, () => {
