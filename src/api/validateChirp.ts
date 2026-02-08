@@ -1,24 +1,35 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
-import { respondWithError, respondWithJSON } from "./json.js";
+import { respondWithJSON } from "./json.js";
 
-export async function validateChirp(req: Request, res: Response) {
-  type parameters = {
-    body: string;
-  };
+const BANNED_WORDS = ["kerfuffle", "sharbert", "fornax"];
 
+export async function validateChirp(req: Request, res: Response, next: NextFunction) {
+  try {
+    type parameters = {
+      body: string;
+    };
 
-  let params = req.body as parameters;
+    let params = req.body as parameters;
 
-  console.log("Received request body:", params);
+    console.log("Received request body:", params);
 
-  const maxChirpLength = 140;
-  if (params.body.length > maxChirpLength) {
-    respondWithError(res, 400, "Chirp is too long");
-    return;
+    const maxChirpLength = 140;
+    if (params.body.length > maxChirpLength) {
+      throw new Error("Chirp is too long");
+    }
+
+    let cleanedBody = params.body;
+    for (const word of BANNED_WORDS) {
+      if (cleanedBody.toLowerCase().split(" ").includes(word)) {
+        cleanedBody = cleanedBody.replace(new RegExp(word, "gi"), "****");
+      }
+    }
+
+    respondWithJSON(res, 200, {
+      cleanedBody,
+    });
+  } catch (error) {
+    next(error);
   }
-
-  respondWithJSON(res, 200, {
-    valid: true,
-  });
 }

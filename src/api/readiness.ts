@@ -1,6 +1,10 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
-export async function handlerReadiness(_: Request, res: Response) {
-  res.set("Content-Type", "text/plain; charset=utf-8");
-  res.send("OK");
+export async function handlerReadiness(_: Request, res: Response, next: NextFunction) {
+  try {
+    res.set("Content-Type", "text/plain; charset=utf-8");
+    res.send("OK");
+  } catch (error) {
+    next(error);
+  }
 }
