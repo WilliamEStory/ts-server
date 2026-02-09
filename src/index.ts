@@ -7,7 +7,7 @@ import { config } from "./config.js";
 
 import { handlerMetrics } from "./api/admin/metrics.js";
 import { handlerReset } from "./api/admin/reset.js";
-import { postChirp } from "./api/chirps.js";
+import { getChirps, postChirp } from "./api/chirps.js";
 import { handlerReadiness } from "./api/readiness.js";
 import { postUser } from "./api/users.js";
 import { middlewareError } from "./middleware/middlewareError.js";
@@ -29,6 +29,7 @@ app.get("/api/healthz", (req, res, next) => {
   Promise.resolve(handlerReadiness(req, res)).catch(next);
 });
 
+//admin endpoints
 app.post("/admin/reset", (req, res, next) => {
   Promise.resolve(handlerReset(req, res)).catch(next);
 });
@@ -36,11 +37,17 @@ app.get("/admin/metrics", (req, res, next) => {
   Promise.resolve(handlerMetrics(req, res)).catch(next);
 });
 
+// users endpoints
 app.post("/api/users", (req, res, next) => {
   Promise.resolve(postUser(req, res)).catch(next);
 });
+
+// chirps endpoints
 app.post("/api/chirps", (req, res, next) => {
   Promise.resolve(postChirp(req, res)).catch(next);
+})
+app.get("/api/chirps", (req, res, next) => {
+  Promise.resolve(getChirps(req, res)).catch(next);
 })
 
 app.use(middlewareError);

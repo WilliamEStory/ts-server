@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 
-import { createChirp } from "../db/queries/chirps.js";
+import { createChirp, getAllChirps } from "../db/queries/chirps.js";
 import { BadRequestError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
 
@@ -32,4 +32,9 @@ export async function postChirp(req: Request, res: Response) {
   });
 
   respondWithJSON(res, 201, chirp);
+}
+
+export async function getChirps(req: Request, res: Response) {
+  const chirps = await getAllChirps();
+  respondWithJSON(res, 200, chirps);
 }
