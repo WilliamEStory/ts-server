@@ -8,6 +8,7 @@ import { config } from "./config.js";
 import { handlerMetrics } from "./api/admin/metrics.js";
 import { handlerReset } from "./api/admin/reset.js";
 import { handlerReadiness } from "./api/readiness.js";
+import { postUser } from "./api/users.js";
 import { validateChirp } from "./api/validateChirp.js";
 import { middlewareError } from "./middleware/middlewareError.js";
 import { middlewareLogResponses } from "./middleware/middlewareLogging.js";
@@ -37,6 +38,10 @@ app.post("/admin/reset", (req, res, next) => {
 app.get("/admin/metrics", (req, res, next) => {
   Promise.resolve(handlerMetrics(req, res)).catch(next);
 });
+
+app.post("/api/users", (req, res, next) => {
+  Promise.resolve(postUser(req, res)).catch(next);
+})
 
 app.use(middlewareError);
 
