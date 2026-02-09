@@ -8,6 +8,27 @@
       "when": 1770596840320,
       "tag": "0000_watery_ares",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1770599062404,
+      "tag": "0001_military_vengeance",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770599292564,
+      "tag": "0002_abnormal_jackpot",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1770600299891,
+      "tag": "0003_tense_silverclaw",
+      "breakpoints": true
     }
   ]
 }

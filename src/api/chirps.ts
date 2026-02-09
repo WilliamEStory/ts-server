@@ -1,18 +1,18 @@
 import type { Request, Response } from "express";
 
+import { createChirp } from "../db/queries/chirps.js";
 import { BadRequestError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
 
 const BANNED_WORDS = ["kerfuffle", "sharbert", "fornax"];
 
-export async function validateChirp(req: Request, res: Response) {
+export async function postChirp(req: Request, res: Response) {
   type parameters = {
     body: string;
+    userId: string;
   };
 
   let params = req.body as parameters;
-
-  console.log("Received request body:", params);
 
   const maxChirpLength = 140;
   if (params.body.length > maxChirpLength) {
@@ -26,7 +26,10 @@ export async function validateChirp(req: Request, res: Response) {
     }
   }
 
-  respondWithJSON(res, 200, {
-    cleanedBody,
+  const chirp = await createChirp({
+    body: cleanedBody,
+    userId: params.userId,
   });
+
+  respondWithJSON(res, 201, chirp);
 }

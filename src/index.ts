@@ -7,9 +7,9 @@ import { config } from "./config.js";
 
 import { handlerMetrics } from "./api/admin/metrics.js";
 import { handlerReset } from "./api/admin/reset.js";
+import { postChirp } from "./api/chirps.js";
 import { handlerReadiness } from "./api/readiness.js";
 import { postUser } from "./api/users.js";
-import { validateChirp } from "./api/validateChirp.js";
 import { middlewareError } from "./middleware/middlewareError.js";
 import { middlewareLogResponses } from "./middleware/middlewareLogging.js";
 import { middlewareMetricsInc } from "./middleware/middlewareMetricsInc.js";
@@ -28,9 +28,6 @@ app.use("/app", express.static("./src/app"));
 app.get("/api/healthz", (req, res, next) => {
   Promise.resolve(handlerReadiness(req, res)).catch(next);
 });
-app.post("/api/validate_chirp", (req, res, next) => {
-  Promise.resolve(validateChirp(req, res)).catch(next);
-});
 
 app.post("/admin/reset", (req, res, next) => {
   Promise.resolve(handlerReset(req, res)).catch(next);
@@ -41,6 +38,9 @@ app.get("/admin/metrics", (req, res, next) => {
 
 app.post("/api/users", (req, res, next) => {
   Promise.resolve(postUser(req, res)).catch(next);
+});
+app.post("/api/chirps", (req, res, next) => {
+  Promise.resolve(postChirp(req, res)).catch(next);
 })
 
 app.use(middlewareError);

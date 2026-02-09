@@ -1,4 +1,14 @@
 {
   "editor.defaultFormatter": "vscode.typescript-language-features",
-  "editor.formatOnPaste": true
+  "editor.formatOnPaste": true,
+  "sqltools.connections": [
+    {
+      "ssh": "Disabled",
+      "previewLimit": 50,
+      "server": "localhost",
+      "driver": "PostgreSQL",
+      "name": "chirps",
+      "connectString": "postgres://postgres:postgres@localhost:5432/chirpy?sslmode=disable"
+    }
+  ]
 }
