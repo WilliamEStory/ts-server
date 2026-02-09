@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 
-import { createChirp, getAllChirps } from "../db/queries/chirps.js";
+import { createChirp, getAllChirps, getChirpById } from "../db/queries/chirps.js";
 import { BadRequestError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
 
@@ -37,4 +37,16 @@ export async function postChirp(req: Request, res: Response) {
 export async function getChirps(req: Request, res: Response) {
   const chirps = await getAllChirps();
   respondWithJSON(res, 200, chirps);
+}
+
+export async function getChirp(req: Request, res: Response) {
+  type parameters = {
+    chirpId: string;
+  };
+
+  let params = req.params as parameters;
+
+  const chirpId = params.chirpId;
+  const chirp = await getChirpById(chirpId);
+  respondWithJSON(res, 200, chirp);
 }

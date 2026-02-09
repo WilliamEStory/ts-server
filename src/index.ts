@@ -7,7 +7,7 @@ import { config } from "./config.js";
 
 import { handlerMetrics } from "./api/admin/metrics.js";
 import { handlerReset } from "./api/admin/reset.js";
-import { getChirps, postChirp } from "./api/chirps.js";
+import { getChirp, getChirps, postChirp } from "./api/chirps.js";
 import { handlerReadiness } from "./api/readiness.js";
 import { postUser } from "./api/users.js";
 import { middlewareError } from "./middleware/middlewareError.js";
@@ -48,6 +48,9 @@ app.post("/api/chirps", (req, res, next) => {
 })
 app.get("/api/chirps", (req, res, next) => {
   Promise.resolve(getChirps(req, res)).catch(next);
+})
+app.get("/api/chirps/:chirpId", (req, res, next) => {
+  Promise.resolve(getChirp(req, res)).catch(next);
 })
 
 app.use(middlewareError);
