@@ -1,7 +1,9 @@
 import type { Request, Response } from "express";
 
+import { config } from "../config.js";
 import { createChirp, getAllChirps, getChirpById } from "../db/queries/chirps.js";
-import { BadRequestError } from "./errors.js";
+import { getBearerToken, validateJWT } from "./auth.js";
+import { BadRequestError, UserForbiddenError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
 
 const BANNED_WORDS = ["kerfuffle", "sharbert", "fornax"];
@@ -12,7 +14,15 @@ export async function postChirp(req: Request, res: Response) {
     userId: string;
   };
 
+  const token = getBearerToken(req);
+
+  const userJWTId = validateJWT(token, config.jwt.secret);
+
   let params = req.body as parameters;
+
+  if (!userJWTId) {
+    throw new UserForbiddenError("User is not allowed to post this chirp");
+  }
 
   const maxChirpLength = 140;
   if (params.body.length > maxChirpLength) {
@@ -28,7 +38,7 @@ export async function postChirp(req: Request, res: Response) {
 
   const chirp = await createChirp({
     body: cleanedBody,
-    userId: params.userId,
+    userId: userJWTId,
   });
 
   respondWithJSON(res, 201, chirp);

@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { checkPasswordHash, hashPassword, makeJWT, validateJWT } from "./auth";
+import { checkPasswordHash, getBearerToken, hashPassword, makeJWT, validateJWT } from "./auth";
 
 describe("Password Hashing", () => {
   const password1 = "correctPassword123!";
@@ -40,4 +40,20 @@ describe("JWT", () => {
   it("should throw an error for an invalid JWT", () => {
     expect(() => validateJWT("invalid", secret)).toThrow();
   });
-})
+});
+
+describe("Bearer Token", () => {
+  it("should return the token", () => {
+    const token = makeJWT("user1", 60, "secret");
+    const result = getBearerToken({
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    } as any);
+    expect(result).toBe(token);
+  });
+
+  it("should throw an error for an invalid token", () => {
+    expect(() => getBearerToken({ headers: { Authorization: "Bearer invalid" } } as any)).toThrow();
+  });
+});

@@ -1,6 +1,7 @@
 import * as argon2 from "argon2";
+import { Request } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { UserNotAuthenticatedError } from "./errors";
+import { BadRequestError, UserNotAuthenticatedError } from "./errors.js";
 
 export type payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
 const TOKEN_ISSUER = "chirpy";
@@ -47,6 +48,22 @@ export function makeJWT(userID: string, expiresIn: number, secret: string) {
     secret,
     { algorithm: "HS256" },
   );
+
+  return token;
+}
+
+export function getBearerToken(req: Request) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    throw new BadRequestError("No authorization header");
+  }
+
+  const [type, token] = authHeader.split(" ");
+
+  if (type !== "Bearer") {
+    throw new BadRequestError("Invalid token type");
+  }
 
   return token;
 }
