@@ -23,6 +23,7 @@ type JWTConfig = {
   secret: string;
   issuer: string;
   defaultDuration: number;
+  refreshTokenDuration: number;
 };
 
 function envOrThrow(key: string) {
@@ -50,6 +51,7 @@ export const config: Config = {
   jwt: {
     secret: envOrThrow("JWT_SECRET"),
     issuer: "chirpy",
-    defaultDuration: 60 * 60
+    defaultDuration: 60 * 60,
+    refreshTokenDuration: 60 * 60 * 24 * 60,
   }
 };

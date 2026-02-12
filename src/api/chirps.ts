@@ -13,12 +13,11 @@ export async function postChirp(req: Request, res: Response) {
     body: string;
     userId: string;
   };
+  let params = req.body as parameters;
 
   const token = getBearerToken(req);
 
-  const userJWTId = validateJWT(token, config.jwt.secret);
-
-  let params = req.body as parameters;
+  let userJWTId = validateJWT(token, config.jwt.secret);
 
   if (!userJWTId) {
     throw new UserForbiddenError("User is not allowed to post this chirp");

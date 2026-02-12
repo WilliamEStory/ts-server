@@ -67,3 +67,4 @@ export function getBearerToken(req: Request) {
 
   return token;
 }
+
