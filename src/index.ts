@@ -10,7 +10,7 @@ import { handlerReset } from "./api/admin/reset.js";
 import { getChirp, getChirps, postChirp } from "./api/chirps.js";
 import { login, refresh, revokeRefreshToken } from "./api/login.js";
 import { handlerReadiness } from "./api/readiness.js";
-import { postUser } from "./api/users.js";
+import { postUser, putUser } from "./api/users.js";
 import { middlewareError } from "./middleware/middlewareError.js";
 import { middlewareLogResponses } from "./middleware/middlewareLogging.js";
 import { middlewareMetricsInc } from "./middleware/middlewareMetricsInc.js";
@@ -53,6 +53,9 @@ app.post("/api/revoke", (req, res, next) => {
 app.post("/api/users", (req, res, next) => {
   Promise.resolve(postUser(req, res)).catch(next);
 });
+app.put("/api/users", (req, res, next) => {
+  Promise.resolve(putUser(req, res)).catch(next);
+})
 
 // chirps endpoints
 app.post("/api/chirps", (req, res, next) => {
