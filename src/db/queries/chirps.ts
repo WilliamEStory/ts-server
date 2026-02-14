@@ -17,11 +17,12 @@ export async function getAllChirps() {
   return await db.select().from(chirps).orderBy(asc(chirps.createdAt));
 }
 
-export async function getChirpById(chirpId: string) {
-  const chirpRows = await db.select().from(chirps).where(eq(chirps.id, chirpId)).limit(1);
-  if (chirpRows.length === 0) {
-    return;
-  }
+export async function getChirp(id: string) {
+  const [result] = await db.select().from(chirps).where(eq(chirps.id, id));
+  return result;
+}
 
-  return chirpRows[0];
+export async function deleteChirp(id: string) {
+  const rows = await db.delete(chirps).where(eq(chirps.id, id)).returning();
+  return rows.length > 0;
 }

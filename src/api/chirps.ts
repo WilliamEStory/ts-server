@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
 
 import { config } from "../config.js";
-import { createChirp, getAllChirps, getChirpById } from "../db/queries/chirps.js";
+import { createChirp, deleteChirp as deleteChirpById, getAllChirps, getChirp as getChirpById } from "../db/queries/chirps.js";
 import { getBearerToken, validateJWT } from "./auth.js";
-import { BadRequestError, UserForbiddenError } from "./errors.js";
+import { BadRequestError, NotFoundError, UserForbiddenError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
 
 const BANNED_WORDS = ["kerfuffle", "sharbert", "fornax"];
@@ -58,4 +58,31 @@ export async function getChirp(req: Request, res: Response) {
   const chirpId = params.chirpId;
   const chirp = await getChirpById(chirpId);
   respondWithJSON(res, 200, chirp);
+}
+
+export async function deleteChirp(req: Request, res: Response) {
+  const { chirpId } = req.params;
+
+  if (typeof chirpId !== "string") {
+    throw new BadRequestError("Invalid chirp ID");
+  }
+
+  const token = getBearerToken(req);
+  const userId = validateJWT(token, config.jwt.secret);
+
+  const chirp = await getChirpById(chirpId);
+  if (!chirp) {
+    throw new NotFoundError(`Chirp with chirpId: ${chirpId} not found`);
+  }
+
+  if (chirp.userId !== userId) {
+    throw new UserForbiddenError("You can't delete this chirp");
+  }
+
+  const deleted = await deleteChirpById(chirpId);
+  if (!deleted) {
+    throw new Error(`Failed to delete chirp with chirpId: ${chirpId}`);
+  }
+
+  res.status(204).send();
 }
