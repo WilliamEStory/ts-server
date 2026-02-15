@@ -68,3 +68,18 @@ export function getBearerToken(req: Request) {
   return token;
 }
 
+export function getAPIKey(req: Request) {
+  const apiKey = req.headers.authorization;
+
+  if (!apiKey) {
+    throw new UserNotAuthenticatedError("No API key");
+  }
+
+  const [type, key] = apiKey.split(" ");
+
+  if (type !== "ApiKey") {
+    throw new UserNotAuthenticatedError("Invalid API key type");
+  }
+
+  return key;
+}

@@ -43,6 +43,13 @@
       "when": 1770868782146,
       "tag": "0005_exotic_molecule_man",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1771114296690,
+      "tag": "0006_greedy_leader",
+      "breakpoints": true
     }
   ]
 }

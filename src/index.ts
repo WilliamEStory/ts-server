@@ -9,6 +9,7 @@ import { handlerMetrics } from "./api/admin/metrics.js";
 import { handlerReset } from "./api/admin/reset.js";
 import { deleteChirp, getChirp, getChirps, postChirp } from "./api/chirps.js";
 import { login, refresh, revokeRefreshToken } from "./api/login.js";
+import { handleWebhook } from "./api/polka/webhooks.js";
 import { handlerReadiness } from "./api/readiness.js";
 import { postUser, putUser } from "./api/users.js";
 import { middlewareError } from "./middleware/middlewareError.js";
@@ -69,6 +70,11 @@ app.get("/api/chirps/:chirpId", (req, res, next) => {
 })
 app.delete("/api/chirps/:chirpId", (req, res, next) => {
   Promise.resolve(deleteChirp(req, res)).catch(next);
+})
+
+// polka endpoints
+app.post("/api/polka/webhooks", (req, res, next) => {
+  Promise.resolve(handleWebhook(req, res)).catch(next);
 })
 
 app.use(middlewareError);
