@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 
 import { config } from "../config.js";
-import { createChirp, deleteChirp as deleteChirpById, getAllChirps, getChirp as getChirpById } from "../db/queries/chirps.js";
+import { createChirp, deleteChirp as deleteChirpById, getAllChirps, getChirp as getChirpById, getChirpsByAuthorId } from "../db/queries/chirps.js";
 import { getBearerToken, validateJWT } from "./auth.js";
 import { BadRequestError, NotFoundError, UserForbiddenError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
@@ -44,8 +44,20 @@ export async function postChirp(req: Request, res: Response) {
 }
 
 export async function getChirps(req: Request, res: Response) {
-  const chirps = await getAllChirps();
-  respondWithJSON(res, 200, chirps);
+  const authorId = req.query.authorId || "";
+  const sortDir = req.query.sort || "asc";
+
+  if (sortDir !== "asc" && sortDir !== "desc") {
+    throw new BadRequestError("Invalid sort direction");
+  }
+
+  if (authorId && typeof authorId === "string") {
+    const chirps = await getChirpsByAuthorId(authorId, sortDir);
+    respondWithJSON(res, 200, chirps);
+  } else {
+    const chirps = await getAllChirps(sortDir);
+    respondWithJSON(res, 200, chirps);
+  }
 }
 
 export async function getChirp(req: Request, res: Response) {
@@ -57,6 +69,11 @@ export async function getChirp(req: Request, res: Response) {
 
   const chirpId = params.chirpId;
   const chirp = await getChirpById(chirpId);
+
+  if (!chirp) {
+    throw new NotFoundError(`Chirp with chirpId: ${chirpId} not found`);
+  }
+
   respondWithJSON(res, 200, chirp);
 }
 
@@ -71,6 +88,7 @@ export async function deleteChirp(req: Request, res: Response) {
   const userId = validateJWT(token, config.jwt.secret);
 
   const chirp = await getChirpById(chirpId);
+
   if (!chirp) {
     throw new NotFoundError(`Chirp with chirpId: ${chirpId} not found`);
   }
